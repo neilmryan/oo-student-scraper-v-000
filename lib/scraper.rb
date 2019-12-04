@@ -29,7 +29,39 @@ class Scraper
   end
 
   def self.scrape_profile_page(profile_url)
+    doc = Nokogiri::HTML(open(profile_url))
+
+    #social_icons = doc.css(".social-icon-container a")
+    #social_icon_img_ref = social_icon.css("img").attribute("src").value
+    #social_icon_link = social_icon.attribute("href").value
+
+    #profile_quote = doc.css(".profile-quote").text.delete("\"")
+    #bio = doc.css(".description-holder p").text
+
+    #:profile_quote=>"\"Forget safety. Live where you fear to live. Destroy your reputation. Be notorious.\" - Rumi",
+    #:bio=> "I'm a school"
+
+    info = {}
+
+    doc.css(".social-icon-container a").each do |social_icon|
+      if social_icon.css("img").attribute("src").value.include?("twitter")
+        info[:twitter] = social_icon.attribute("href").value
+      end
+      if social_icon.css("img").attribute("src").value.include?("linkedin")
+        info[:linkedin] = social_icon.attribute("href").value
+      end
+      if social_icon.css("img").attribute("src").value.include?("github")
+        info[:github] = social_icon.attribute("href").value
+      end
+      if social_icon.css("img").attribute("src").value.include?("rss")
+        info[:blog] = social_icon.attribute("href").value
+      end
+    end
+  
+    info[:profile_quote] = doc.css(".profile-quote").text
+    info[:bio] = doc.css(".description-holder p").text
     
+    info
   end
 
 end
